@@ -4,7 +4,7 @@
     <parent>
         <artifactId>relaxfactory</artifactId>
         <groupId>rxf</groupId>
-        <version>0.9.7.4</version>
+        <version>0.9.7.3</version>
     </parent>
     <artifactId>rxf-guice</artifactId>
     <name>rxf DI tools</name>
@@ -12,7 +12,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>7.0.0</version>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>rxf</groupId>

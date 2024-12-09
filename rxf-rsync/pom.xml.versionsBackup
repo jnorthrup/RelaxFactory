@@ -5,7 +5,7 @@
   <parent>
     <groupId>rxf</groupId>
     <artifactId>relaxfactory</artifactId>
-    <version>0.9.7.4</version>
+    <version>0.9.7.3</version>
   </parent>
     <artifactId>rxf-rsync</artifactId>
   <name>rxf-rsync</name>
@@ -24,7 +24,7 @@
       <dependency>
           <groupId>com.google.guava</groupId>
           <artifactId>guava</artifactId>
-          <version>33.3.1-jre</version>
+          <version>16.0</version>
       </dependency>
       <dependency>
           <groupId>rxf</groupId>
