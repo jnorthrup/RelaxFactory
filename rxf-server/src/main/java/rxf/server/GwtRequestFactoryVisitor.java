@@ -70,7 +70,8 @@ public class GwtRequestFactoryVisitor extends Impl implements PreRead {
       cursor = ByteBuffer.allocateDirect(remaining).put(cursor);
     } else {
       cursor = cursor.slice();
-    }    final GwtRequestFactoryVisitor prev = this;
+    }
+    final GwtRequestFactoryVisitor prev = this;
     if (cursor.remaining() != remaining) {
       key.attach(new Impl() {
         @Override

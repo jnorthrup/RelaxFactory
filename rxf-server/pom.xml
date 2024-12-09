@@ -24,14 +24,12 @@
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
-<!--
         <dependency>
-            <groupId>jetbrains</groupId>
+            <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version> </version>
+            <version>24.1.0</version>
             <scope>compile</scope>
         </dependency>
--->
         <!--        <dependency>
                     <groupId>1xio</groupId>
                     <artifactId>1xio</artifactId>
@@ -64,8 +62,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.niloc132</groupId>
-            <artifactId>rpq</artifactId>
-            <version>master-SNAPSHOT</version>
+            <artifactId>gwt-rpq</artifactId>
+            <version>master-3b412b0dec-1</version>
             <optional>true</optional>
         </dependency>
         <!--<dependency>

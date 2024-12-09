@@ -16,3 +16,5 @@ reverseon-gwt
 RxF-idetekt
 1xio
 .DS_Store
+.aider*
+.env

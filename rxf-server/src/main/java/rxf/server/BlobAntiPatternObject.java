@@ -26,6 +26,7 @@ public class BlobAntiPatternObject {
 
   public static final boolean RXF_CACHED_THREADPOOL = "true".equals(RxfBootstrap.getVar("RXF_CACHED_THREADPOOL", "false"));
   public static final int CONNECTION_POOL_SIZE = Integer.parseInt(RxfBootstrap.getVar("RXF_CONNECTION_POOL_SIZE", "20"));
+  public static final long CONNECTION_RETRY_DELAY_MS = 1000; // 1 second delay between retries
   public static boolean DEBUG_SENDJSON = System.getenv().containsKey("DEBUG_SENDJSON");
   public static InetAddress LOOPBACK;
   public static int receiveBufferSize;
@@ -52,28 +53,31 @@ public class BlobAntiPatternObject {
     private static LinkedBlockingDeque<SocketChannel> couchConnections = new LinkedBlockingDeque<>(CONNECTION_POOL_SIZE);
 
     public static SocketChannel createCouchConnection() {
+      int retryCount = 0;
       while (!HttpMethod.killswitch) {
         SocketChannel poll = couchConnections.poll();
         if (null != poll) {
-          // If there was at least one entry, try to use that
-          // Note that we check both connected&&open, its possible to be connected but not open, at least in 1.7.0_45
           if (poll.isConnected() && poll.isOpen()) {
             return poll;
           }
-          //non null entry, but invalid, continue in loop to grab the next...
         } else {
-          // no recycled connections available for reuse, make a new one
           try {
             SocketChannel channel = SocketChannel.open(getCOUCHADDR());
             channel.configureBlocking(false);
             return channel;
+          } catch (ConnectException ce) {
+            // Connection refused - add delay before retry
+            try {
+              Thread.sleep(CONNECTION_RETRY_DELAY_MS);
+            } catch (InterruptedException ie) {
+              Thread.currentThread().interrupt();
+              return null;
+            }
           } catch (Exception e) {
-            // if something went wrong in the process of creating the connection, continue in loop...
             e.printStackTrace();
           }
         }
       }
-      // killswitch, return null
       return null;
     }
 
@@ -98,17 +102,20 @@ public class BlobAntiPatternObject {
     }
 
     public static int getReceiveBufferSize() {
-        switch (receiveBufferSize) {
-            case 0:
-                try {
-                    SocketChannel couchConnection = createCouchConnection();
+        if (receiveBufferSize == 0) {
+            try {
+                SocketChannel couchConnection = createCouchConnection();
+                if (couchConnection != null) {
                     receiveBufferSize = couchConnection.socket().getReceiveBufferSize();
                     recycleChannel(couchConnection);
-                } catch (IOException ignored) {
+                } else {
+                    // Return a reasonable default if we can't connect
+                    return 8192; // Common default socket buffer size
                 }
-                break;
+            } catch (IOException ignored) {
+                return 8192; // Return default on error
+            }
         }
-
         return receiveBufferSize;
     }
 
